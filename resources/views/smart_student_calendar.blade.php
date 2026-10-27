@@ -104,9 +104,9 @@
                     <!-- Time Labels Column (8 AM to 10 PM -> 14 hours total) -->
                     <div class="w-16 shrink-0 border-r border-[#EAE3D9] relative bg-white z-10">
                         <?php 
-                        $hours = [8, 10, 12, 14, 16, 18, 20, 22];
+                        $hours = [5, 6, 7, 8, 10, 12, 14, 16, 18, 20, 22];
                         foreach ($hours as $hour) {
-                            $top = (($hour - 8) / 14) * 100;
+                            $top = (($hour - 5) / 18) * 100;
                             $label = $hour > 12 ? ($hour - 12) . ' PM' : ($hour === 12 ? '12 PM' : $hour . ' AM');
                             echo '<div class="absolute w-full text-center text-[10px] font-bold text-[#A89F93] transform -translate-y-1/2" style="top: ' . $top . '%;">' . $label . '</div>';
                         }
@@ -413,14 +413,34 @@
                     
                     dayEvents.forEach(event => {
                         const start = new Date(event.startTime);
-                        const topPercentage = ((start.getHours() + start.getMinutes()/60 - 8) / 14) * 100;
-                        const durationMins = getDurationMinutes(event.startTime, event.endTime);
-                        const heightPercentage = (durationMins / 840) * 100;
+                        const calendarStartHour = 5;
+                        const calendarEndHour = 23;
+                        const calendarDurationMinutes =
+                            (calendarEndHour - calendarStartHour) * 60;
+
+                        const startMinutes =
+                            start.getHours() * 60 + start.getMinutes();
+
+                        const topPercentage =
+                            ((startMinutes - calendarStartHour * 60) /
+                            calendarDurationMinutes) * 100;
+
+                        const durationMins = getDurationMinutes(
+                            event.startTime,
+                            event.endTime
+                        );
+
+                        const heightPercentage =
+                            (durationMins / calendarDurationMinutes) * 100;
+
 
                         const eventCard = document.createElement('div');
-                        eventCard.className = 'absolute left-2 right-2 rounded-xl p-3 overflow-hidden shadow-sm transition-transform hover:scale-[1.02] cursor-default bg-[#EAD5C3] border border-[#D9C4B2]';
+                        eventCard.className =
+                        'absolute left-1 right-1 rounded-lg p-2 overflow-hidden ' +
+                        'shadow-sm transition-transform hover:scale-[1.02] ' +
+                        'cursor-default bg-[#EAD5C3] border border-[#D9C4B2]';
                         eventCard.style.top = `${topPercentage}%`;
-                        eventCard.style.height = `${Math.max(heightPercentage, 4)}%`;
+                        eventCard.style.height = `${Math.max(heightPercentage, 5.5)}%`;
                         
                         eventCard.innerHTML = `
                             <h4 class="text-xs font-bold text-[#2B2621] leading-tight truncate">${event.subject || event.title}</h4>
